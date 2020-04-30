@@ -11,7 +11,7 @@ import UIKit
 class CharacterComicBookTableViewCell: UITableViewCell {
 
   var dataSource = ChactacterComicsCollectionViewDataSource()
-  var activity = ActivityIndicator()
+  fileprivate var activity = ActivityIndicator()
   
   var collectionView: UICollectionView = {
     let flow = UICollectionViewFlowLayout()
@@ -25,15 +25,19 @@ class CharacterComicBookTableViewCell: UITableViewCell {
     return collectionView
   }()
   
+  
   override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
     super.init(style: style, reuseIdentifier: reuseIdentifier)
   
+    contentView.backgroundColor = .white
     displayLayout()
   }
+  
   
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
+  
   
   private func displayLayout() {
     contentView.addSubview(collectionView)
@@ -46,25 +50,26 @@ class CharacterComicBookTableViewCell: UITableViewCell {
       collectionView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
     ])
     
+    collectionView.register(CharacterComicCollectionViewCell.self, forCellWithReuseIdentifier: comicBookCollectionCell)
+
     collectionView.dataSource = dataSource
     activity.displayActivity(view: contentView)
     activity.startAnimating()
     dataSource.reloadCollectionView = { [weak self] (error) in
       if let weakSelf = self, error == nil {
         DispatchQueue.main.async {
-          weakSelf.collectionView.reloadData()
           weakSelf.activity.stopAnimating()
+          weakSelf.collectionView.reloadData()
         }
       } else {
         //alert
         print("Something went wrong.")
       }
     }
-    
-    collectionView.register(CharacterComicCollectionViewCell.self, forCellWithReuseIdentifier: comicBookCollectionCell)
   }
   
   
+  //MARK:- Helpers
   func triggerDataSource(character: Character?) {
     guard let id = character?.id else {
       print("Failed to unwrap character in the tableview cell")

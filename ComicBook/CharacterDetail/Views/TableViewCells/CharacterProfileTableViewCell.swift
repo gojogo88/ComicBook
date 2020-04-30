@@ -15,18 +15,17 @@ class CharacterProfileTableViewCell: UITableViewCell {
     name.numberOfLines = 0
     name.font = UIFont(name: fontStyle, size: heroNameFontSize)
     name.textColor = .black
-    name.text = "I need a Hero"
     name.translatesAutoresizingMaskIntoConstraints = false
     return name
   }()
   
   var profileHolderView: UIView = {
-    let view = UIView()
-    view.clipsToBounds = true
-    view.layer.cornerRadius = 120/2
-    view.translatesAutoresizingMaskIntoConstraints = false
-    view.applyDropShadow(shadowColor: .black)
-    return view
+    let holder = UIView()
+    holder.clipsToBounds = true
+    holder.layer.cornerRadius = 120/2
+    holder.translatesAutoresizingMaskIntoConstraints = false
+    holder.applyDropShadow(shadowColor: .black)
+    return holder
   }()
   
   var profileImage: UIImageView = {
@@ -42,7 +41,7 @@ class CharacterProfileTableViewCell: UITableViewCell {
     
     contentView.backgroundColor = .clear
     self.backgroundColor = .clear
-    displayLayout()
+    layoutTableViewCell()
   }
   
   required init?(coder: NSCoder) {
@@ -50,7 +49,7 @@ class CharacterProfileTableViewCell: UITableViewCell {
   }
   
     
-  private func displayLayout() {
+  private func layoutTableViewCell() {
     let padding: CGFloat = 10
     
     var height = nameOfHero.constraints.filter{$0.firstAttribute == .height}.first?.constant ?? 60  // height of nameOfHero

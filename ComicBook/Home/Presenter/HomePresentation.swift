@@ -12,6 +12,7 @@ class HomePresentation: NSObject, UICollectionViewDelegate {
   weak var controller: UIViewController?
   var dataSource = HomeDataSource()
   var activity = ActivityIndicator()
+  var pageNumber = 1
   
   var collectionView: UICollectionView = {
     let flow = UICollectionViewFlowLayout()
@@ -40,15 +41,18 @@ class HomePresentation: NSObject, UICollectionViewDelegate {
     collectionView.dataSource = dataSource
     collectionView.delegate = self
     
-    dataSource.fetchData()
-    activity.displayActivity(view: controller.view)
+    dataSource.fetchData(pageNumber: 0)
+    activity.displayActivity(view: collectionView)
     activity.startAnimating()
     dataSource.updateUI = { [weak self] (error) in
       if let weakSelf = self, error == nil {
         DispatchQueue.main.async {
+          weakSelf.pageNumber += 1
           weakSelf.collectionView.reloadData()
-          weakSelf.activity.stopAnimating()
         }
+      }
+      DispatchQueue.main.async {
+        self?.activity.stopAnimating()
       }
     }
   }
@@ -56,7 +60,7 @@ class HomePresentation: NSObject, UICollectionViewDelegate {
   
   // MARK:- CollectionView Delegate
   func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-    let character = dataSource.characterDataSource?.apiDataSource?.characters?[indexPath.item]
+    let character = dataSource.characters[indexPath.item]
   
     let cell = collectionView.cellForItem(at: indexPath)
     cell?.animateButtonPress()
@@ -66,5 +70,14 @@ class HomePresentation: NSObject, UICollectionViewDelegate {
       detailView.character = character
       self.controller?.navigationController?.pushViewController(detailView, animated: true)
     })
+  }
+  
+  func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+    let offsetY = scrollView.contentOffset.y
+    let height = scrollView.contentSize.height
+    
+    if offsetY > height - scrollView.frame.size.height {
+      dataSource.fetchData(pageNumber: pageNumber)
+    }
   }
 }

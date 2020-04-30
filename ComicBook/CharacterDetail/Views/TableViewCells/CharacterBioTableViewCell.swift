@@ -13,12 +13,11 @@ class CharacterBioTableViewCell: UITableViewCell {
   var bio: UILabel = {
     let label = UILabel()
     label.numberOfLines = 0
+    label.font = UIFont.systemFont(ofSize: 15, weight: .light)
     label.translatesAutoresizingMaskIntoConstraints = false
     label.textColor = .black
-    label.text = "This is some sample text. It will be long and will wrap to the second line."
     return label
   }()
-  
   
   
   override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {

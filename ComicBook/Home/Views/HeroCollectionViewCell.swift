@@ -11,21 +11,10 @@ import SDWebImage
 
 class HeroCollectionViewCell: UICollectionViewCell {
   
-  override init(frame: CGRect) {
-    super.init(frame: frame)
-    
-    setupCell()
-    contentView.applyDropShadow(shadowColor: .black)
-  }
-  
-  required init?(coder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
-  }
-  
-  
   var heroImage: UIImageView = {
     let image = UIImageView()
     image.clipsToBounds = true
+    image.contentMode = .scaleToFill
     image.translatesAutoresizingMaskIntoConstraints = false
     image.layer.cornerRadius = 16
     return image
@@ -41,12 +30,23 @@ class HeroCollectionViewCell: UICollectionViewCell {
   var heroNameTitle: UILabel = {
     let title = UILabel()
     title.translatesAutoresizingMaskIntoConstraints = false
-    title.text = "Cool COmics"
     title.textColor = .white
     title.numberOfLines = 1
     title.font = UIFont(name: fontStyle, size: heroNameFontSize)
     return title
   }()
+  
+  override init(frame: CGRect) {
+    super.init(frame: frame)
+    
+    setupCell()
+    contentView.applyDropShadow(shadowColor: .black)
+  }
+  
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+  
   
   fileprivate func setupCell() {
     let padding: CGFloat = 10

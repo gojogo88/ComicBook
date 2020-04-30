@@ -12,12 +12,13 @@ class CharacterComicCollectionViewCell: UICollectionViewCell {
   
   var activity = ActivityIndicator()
   
-  var comicImage: UIImageView = {
+  var comicBookCover: UIImageView = {
     let cover = UIImageView()
     cover.contentMode = .scaleAspectFit
     cover.clipsToBounds = true
+    cover.layer.masksToBounds = true
     cover.translatesAutoresizingMaskIntoConstraints = false
-    cover.applyDropShadow(shadowColor: .black)
+    //cover.applyDropShadow(shadowColor: .black)
     return cover
   }()
   
@@ -25,7 +26,7 @@ class CharacterComicCollectionViewCell: UICollectionViewCell {
     let title = UILabel()
     title.numberOfLines = 0
     title.textColor = .black
-    title.applyDropShadow(shadowColor: .black)
+    //title.applyDropShadow(shadowColor: .black)
     title.font = UIFont(name: fontStyle, size: characterComicFontSize)
     title.translatesAutoresizingMaskIntoConstraints = false
     title.textAlignment = .center
@@ -36,7 +37,8 @@ class CharacterComicCollectionViewCell: UICollectionViewCell {
   override init(frame: CGRect) {
     super.init(frame: frame)
     
-    setupCell()
+    contentView.applyDropShadow(shadowColor: .black)
+    setupCellContent()
   }
   
   required init?(coder: NSCoder) {
@@ -44,19 +46,19 @@ class CharacterComicCollectionViewCell: UICollectionViewCell {
   }
   
   
-  fileprivate func setupCell() {
+  fileprivate func setupCellContent() {
     let padding: CGFloat = 10
     
-    contentView.addSubview(comicImage)
+    contentView.addSubview(comicBookCover)
     contentView.addSubview(comicTitle)
     
     NSLayoutConstraint.activate([
-      comicImage.topAnchor.constraint(equalTo: contentView.topAnchor),
-      comicImage.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: padding),
-      comicImage.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -padding),
-      comicImage.heightAnchor.constraint(lessThanOrEqualToConstant: 160),
+      comicBookCover.topAnchor.constraint(equalTo: contentView.topAnchor),
+      comicBookCover.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: padding),
+      comicBookCover.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -padding),
+      comicBookCover.heightAnchor.constraint(lessThanOrEqualToConstant: 160),
       
-      comicTitle.topAnchor.constraint(equalTo: comicImage.bottomAnchor, constant: padding),
+      comicTitle.topAnchor.constraint(equalTo: comicBookCover.bottomAnchor, constant: padding),
       comicTitle.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5),
       comicTitle.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5),
       //comicTitle.heightAnchor.constraint(equalToConstant: 160),
@@ -65,16 +67,16 @@ class CharacterComicCollectionViewCell: UICollectionViewCell {
   }
   
   func setData(comic: Comic?) {
-    activity.displayActivity(view: comicImage)
+    activity.displayActivity(view: comicBookCover)
     activity.startAnimating()
     comicTitle.text = comic?.title
     guard let path = comic?.cover?.path, let ext = comic?.cover?.fileExtension else {
-      comicImage.image = UIImage(named: defaultComicImagePlaceHolder)
+      comicBookCover.image = UIImage(named: defaultComicImagePlaceHolder)
       activity.stopAnimating()
       return
     }
     let url = path + "." + ext
-    comicImage.sd_setImage(with: URL(string: url)!, placeholderImage: nil, options: .continueInBackground, progress: nil) { (image, error, cache, url) in
+    comicBookCover.sd_setImage(with: URL(string: url)!, placeholderImage: nil, options: .continueInBackground, progress: nil) { (image, error, cache, url) in
       self.activity.stopAnimating()
     }
   }
